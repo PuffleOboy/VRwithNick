@@ -14,13 +14,16 @@ public class XR_JumpController : MonoBehaviour
     public bool isJumping = false;
     private bool lastState = false;
     private float jumppos;
-    public float jumpSpeed = 4.0f;
+    
 
     private float fallingSpeed;
     private XRRig rig;
     private AudioSource MainSFX;
     private Vector2 inputAxis;
     private CharacterController character;
+    private Vector3 movingDirection = Vector3.zero;
+    public float gravity = 10.0f;
+    public float jumpSpeed = 4.0f;
 
     void Start()
     {
@@ -74,10 +77,13 @@ public class XR_JumpController : MonoBehaviour
     {
         if (character.transform.position.y >= jumppos + jumpHeight)
         {
+            movingDirection.y = jumpSpeed;
             isJumping = false;
             character.slopeLimit = 45;
         }
-        character.Move(Vector3.up * jumpSpeed * Time.smoothDeltaTime);
+        movingDirection.y += Mathf.Sqrt(jumpHeight * -3.0f * gravity);
+        //movingDirection.y -= gravity * Time.deltaTime;
+        character.Move(movingDirection * Time.smoothDeltaTime);
     }
 
     public bool SecondaryButtonDown()

@@ -11,6 +11,13 @@ public class PlayerController : MonoBehaviour
     //private Rigidbody _body;
     private CharacterController character;
 
+    private Vector3 movingDirection = Vector3.zero;
+    public float gravity = 10.0f;
+    //public float jumpSpeed = 4.0f;
+    private float jumppos;
+    public float jumpHeight = 5.0f;
+    public bool isJumping = false;
+
     private bool IsGrounded => Physics.Raycast(
         new Vector2(transform.position.x, transform.position.y + 2.0f),
         Vector3.down, 5.0f);
@@ -31,6 +38,15 @@ public class PlayerController : MonoBehaviour
     private void OnJump(InputAction.CallbackContext obj)
     {
         if (!IsGrounded) return;
-        character.Move(Vector3.up * jumpSpeed * Time.smoothDeltaTime); ;
+        //character.Move(Vector3.up * jumpSpeed * Time.smoothDeltaTime); ;
+        if (character.transform.position.y >= jumppos + jumpHeight)
+        {
+            movingDirection.y = jumpSpeed;
+            isJumping = false;
+            character.slopeLimit = 45;
+        }
+        movingDirection.y += Mathf.Sqrt(jumpHeight * -3.0f * gravity);
+        //movingDirection.y -= gravity * Time.deltaTime;
+        character.Move(movingDirection * Time.smoothDeltaTime);
     }
 }
